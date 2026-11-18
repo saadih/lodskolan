@@ -31,7 +31,7 @@ const LEVELS = [
   {
     name: 'Första fogen', sub: 'En termometer hjälper dig',
     alloy: 'bly', tip: 'mejsel', temp: 330, sink: 0.1, thermo: true, hints: true,
-    intro: 'Du lödar fast ett motstånd på ett kretskort. Termometern visar hur varm fogen är, och vid den gröna linjen flyter tennet ut. Inuti tenntråden finns flussmedel som får tennet att fästa. Det brinner bort om du värmer för länge.',
+    intro: 'Du löder fast ett motstånd på ett kretskort. Termometern visar hur varm fogen är, och vid den gröna linjen flyter tennet ut. Inuti tenntråden finns flussmedel som får tennet att fästa. Det brinner bort om du värmer för länge.',
   },
   {
     name: 'Blyfritt tenn', sub: 'Smälter senare och kräver mer värme',
@@ -147,6 +147,7 @@ function openIntro(i) {
 }
 
 $('#startBtn').addEventListener('click', startLevel);
+$('#startFirst').addEventListener('click', () => openIntro(0));
 
 function startLevel() {
   const lv = LEVELS[levelIdx];
@@ -546,6 +547,12 @@ window.addEventListener('blur', () => {
   input.iron = input.feed = false;
   $('#btnIron').classList.remove('on');
   $('#btnFeed').classList.remove('on');
+});
+
+// småbilderna på teorisidan ritas med samma form som i spelet
+document.querySelectorAll('[data-joint]').forEach((p) => {
+  const [a, w] = p.dataset.joint.split(',').map(Number);
+  p.setAttribute('d', solderPath(a, w));
 });
 
 renderMenu();

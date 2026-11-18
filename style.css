@@ -100,12 +100,29 @@ kbd {
 .keys { list-style: none; padding: 0; margin: 0 0 20px; }
 .keys li { padding: 6px 0; }
 
+.basics { margin-top: 18px; }
+
+/* ---- teori ---- */
+#teori p { margin: 0 0 10px; max-width: 36em; }
+#teori ul { margin: 0 0 10px; padding-left: 1.1em; max-width: 36em; }
+#teori li { margin: 6px 0; }
+#teori h2 { margin-top: 14px; }
+.joints { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 10px 0; }
+.joints figure { margin: 0; }
+.joints svg {
+  display: block; width: 100%; height: auto; background: #efe9dc;
+  border: 1.5px solid var(--ink); border-radius: 4px;
+}
+.joints figcaption { font-size: 14px; margin-top: 6px; color: var(--ink-2); }
+.joints figcaption b { color: var(--ink); }
+#startFirst { width: 100%; margin: 22px 0 10px; padding: 16px; font-size: 24px; }
+
 /* ---- intro ---- */
-#intro h2 {
+#intro h2, #teori h2 {
   font-family: var(--display); font-weight: 800; text-transform: uppercase;
   font-size: clamp(44px, 12vw, 68px); line-height: 1.05; margin: 2px 0 12px;
 }
-#intro h3 {
+#intro h3, #teori h3 {
   font-family: var(--display); font-weight: 800; text-transform: uppercase;
   font-size: 22px; margin: 28px 0 6px; padding-top: 12px; border-top: 2px solid var(--ink);
 }

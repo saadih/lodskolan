@@ -18,12 +18,99 @@
   <header class="brand">
     <h1>Lär dig löda!</h1>
     <p class="lede">Här övar du lödning i korta interaktiva övningar. Du håller lödkolven och tenntråden själv och ser direkt hur fogen blir. Blir det fel får du veta varför, och sedan provar du igen.</p>
+    <button class="key basics" data-go="teori">Läs grunderna först</button>
   </header>
   <ol id="levels" class="toc"></ol>
   <footer class="credit">
     <a class="starlink" href="https://github.com/saadih/lodskolan">★ Gillar du sidan? Ge den en stjärna på GitHub</a>
     <p>Gjord av Hussein Al-Saadi. Gratis att använda, även i undervisning.</p>
   </footer>
+</section>
+
+<!-- TEORI -->
+<section id="teori" class="screen">
+  <button class="textbtn" data-go="menu">← Alla övningar</button>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="gMini" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fbfaf6"/>
+        <stop offset=".4" stop-color="#cdd3d8"/>
+        <stop offset=".75" stop-color="#8a939b"/>
+        <stop offset="1" stop-color="#dadee1"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <h2>Grunderna</h2>
+  <p class="lede">Det här är bra att kunna innan du löder. Du läser det på ett par minuter.</p>
+
+  <h3>Vad är lödning?</h3>
+  <p>Du fäster ihop två metalldelar med smält tenn. Delarna själva smälter inte, bara tennet. När tennet stelnar sitter komponentens ben fast i kortet, och strömmen kan gå mellan dem.</p>
+
+  <h3>Lödtenn</h3>
+  <p>Lödtenn är en mjuk metalltråd som smälter vid låg temperatur. Det finns två sorter.</p>
+  <ul>
+    <li><b>Tenn med bly</b> smälter vid ungefär 183 °C. Det är lätt att löda med och ger en blank fog. Bly är giftigt, så tvätta händerna efteråt och ät inte vid lödplatsen.</li>
+    <li><b>Blyfritt tenn</b> smälter vid ungefär 217 °C. Det kräver en varmare kolv, och fogen blir lite mattare. Nästan all ny elektronik löds blyfritt, eftersom EU begränsar bly i elektronik.</li>
+  </ul>
+
+  <h3>Flussmedel</h3>
+  <p>Varm metall får en tunn hinna av oxid på ytan, och på den fäster inte tennet. Flussmedel löser upp hinnan så att tennet kan flyta ut och fästa. Flussmedlet ligger inuti tenntråden, så det följer med när du matar tenn.</p>
+  <p>Röken du ser när du löder är flussmedel som brinner. Värmer du för länge brinner allt flussmedel upp, och då blir fogen matt och grynig.</p>
+
+  <h3>Lödkolven</h3>
+  <p>Spetsen är mycket varmare än tennets smältpunkt, så att den hinner värma fogen fort. Vanliga inställningar är ungefär 330 °C för tenn med bly och 360 °C för blyfritt. Följ det din lärare eller arbetsplats säger.</p>
+  <p>En varmare kolv ger ingen bättre fog. Flussmedlet brinner upp fortare, och kortet kan ta skada.</p>
+  <p>Håll spetsen blank. Torka av den och sätt på lite nytt tenn då och då. En svart, smutsig spets leder värme dåligt.</p>
+
+  <h3>Spetsar</h3>
+  <ul>
+    <li><b>Bred spets (mejsel)</b> ger mycket värme och passar till det mesta.</li>
+    <li><b>Smal spets (konisk)</b> når in på trånga ställen men ger lite värme.</li>
+  </ul>
+
+  <h3>Så ser fogen ut</h3>
+  <div class="joints">
+    <figure>
+        <svg viewBox="160 98 80 98" role="img" aria-label="Bra fog">
+          <rect x="160" y="190" width="80" height="6" fill="#1f6a3d"/>
+          <path d="M200 196 V124" stroke="#a9b0b6" stroke-width="6" stroke-linecap="round"/>
+          <rect x="172" y="185" width="56" height="5" fill="#d07f45"/>
+          <path data-joint="1,1" fill="url(#gMini)"/>
+        </svg>
+      <figcaption><b>Bra.</b> Blank och formad som en liten vulkan. Benet syns.</figcaption>
+    </figure>
+    <figure>
+        <svg viewBox="160 98 80 98" role="img" aria-label="Kallod">
+          <rect x="160" y="190" width="80" height="6" fill="#1f6a3d"/>
+          <path d="M200 196 V124" stroke="#a9b0b6" stroke-width="6" stroke-linecap="round"/>
+          <rect x="172" y="185" width="56" height="5" fill="#d07f45"/>
+          <path data-joint="0.9,0" fill="#878a83"/>
+        </svg>
+      <figcaption><b>Kallod.</b> En grå klick som aldrig flutit ut. Den kan glappa.</figcaption>
+    </figure>
+    <figure>
+        <svg viewBox="160 98 80 98" role="img" aria-label="För mycket tenn">
+          <rect x="160" y="190" width="80" height="6" fill="#1f6a3d"/>
+          <path d="M200 196 V124" stroke="#a9b0b6" stroke-width="6" stroke-linecap="round"/>
+          <rect x="172" y="185" width="56" height="5" fill="#d07f45"/>
+          <path data-joint="1.95,1" fill="url(#gMini)"/>
+        </svg>
+      <figcaption><b>För mycket.</b> En kula som gömmer benet.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Hålmontering och ytmontering</h3>
+  <p>Vid hålmontering går komponentens ben genom hål i kortet, och du löder på andra sidan. Det är det du övar här. Vid ytmontering ligger komponenten ovanpå kortet på små pads, utan hål.</p>
+
+  <h3>Säkerhet</h3>
+  <ul>
+    <li>Spetsen är över 300 °C. Ställ alltid kolven i sitt ställ.</li>
+    <li>Andas inte in röken. Använd utsug.</li>
+    <li>Ha skyddsglasögon när du klipper av ben, för bitarna flyger.</li>
+    <li>Tvätta händerna när du är klar.</li>
+  </ul>
+
+  <button id="startFirst" class="key primary">Börja med övning 1</button>
 </section>
 
 <!-- NIVÅINTRO -->
@@ -33,7 +120,7 @@
   <h2 id="introTitle"></h2>
   <p id="introText" class="lede"></p>
   <div id="choose" class="choose"></div>
-  <h3>Så lödar du</h3>
+  <h3>Så löder du</h3>
   <ol class="steps">
     <li>Lägg lödkolven så att spetsen rör både padden och benet.</li>
     <li>Prova med tenntråden mot fogen. När tennet smälter är fogen varm nog.</li>

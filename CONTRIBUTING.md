@@ -52,4 +52,4 @@ The players are beginners, and the site is in Swedish.
 ## Facts
 
 Soldering advice differs between workplaces. If you change a temperature or a technique, say in the pull request
-where it comes from. Write explanations in your own words and don't copy text from IPC standards or course material.
+where it comes from, and add a numbered footnote and an APA reference on the theory page. Write explanations in your own words and don't copy text from IPC standards or course material.

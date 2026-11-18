@@ -115,14 +115,11 @@ kbd {
 }
 .joints figcaption { font-size: 14px; margin-top: 6px; color: var(--ink-2); }
 .joints figcaption b { color: var(--ink); }
-#teori ul.sources { list-style: none; padding: 0; }
-.sources li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
-.src-topic {
-  display: block; font-family: var(--display); font-weight: 600; font-size: 14px;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2);
-}
-.sources a { font-weight: 700; }
-.src-note { display: block; font-size: 15px; color: var(--ink-2); }
+.ref { font-size: .7em; line-height: 0; }
+.ref a { text-decoration: none; font-weight: 700; padding: 0 1px; }
+.refs { padding-left: 1.6em; margin: 0 0 12px; max-width: 40em; font-size: 15px; }
+.refs li { margin: 8px 0; padding-left: 2px; overflow-wrap: anywhere; scroll-margin-top: 16px; }
+.refs li:target { background: var(--paper-2); outline: 2px solid var(--copper); outline-offset: 4px; }
 #startFirst { width: 100%; margin: 22px 0 10px; padding: 16px; font-size: 24px; }
 
 /* ---- intro ---- */

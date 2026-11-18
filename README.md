@@ -12,9 +12,8 @@ Want more exercises, or found something wrong? [Open an issue](https://github.co
 
 ## Sources
 
-The theory page ends with a "Läs vidare" list. The facts on the site were checked against those sources:
-the Adafruit Guide to Excellent Soldering, Swedish and English Wikipedia (Lödning, Lödtenn, Solder alloys,
-Flussmedel), Kemikalieinspektionen on RoHS, and the HSE leaflet "Solder fume and you".
+Claims on the theory page carry numbered footnotes, and the page ends with a reference list in APA style.
+If you add or change a fact, add a footnote and a reference for it.
 
 ## Deploy
 

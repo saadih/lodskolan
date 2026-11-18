@@ -1,10 +1,11 @@
 # Lödskolan
 
-An interactive site for learning to solder: judge solder joints in a game, and read short theory pages on
-tips, solder alloys, through-hole and surface-mount soldering, and safety. In Swedish.
+A soldering practice game for the phone, in Swedish. You hold one button for the iron and one for the solder,
+and a heat model decides the result: a good joint, a cold joint, burnt flux, a lifted pad, or too little or too
+much solder. Each result tells you what you did and how to fix it.
 
-Open `index.html` in a browser. No install needed.
+Open `index.html` in a browser. Nothing to install.
 
-Made by Hussein Al-Saadi. Free to use in teaching. If it helps you, a star on GitHub is appreciated.
+Made by Hussein Al-Saadi. Teachers can use it in class for free. Star the repo if it helps you.
 
-See [PLAN.md](PLAN.md) for what is planned.
+[PLAN.md](PLAN.md) lists what comes next.

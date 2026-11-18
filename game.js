@@ -10,8 +10,9 @@ const mix = (a, b, t) => a + (b - a) * t;
    ~1–2 s förvärmning, ~1 s tenn, ~0,5 s efter. */
 const ROOM = 25;          // rumstemperatur, °C
 const WET_MARGIN = 25;    // tennet flyter ut ordentligt ca 25 °C över smältpunkten
-const HOT = 290;          // över detta tar kortet skada
+const HOT = 280;          // över detta tar kortet skada
 const LIFT_DOSE = 7;      // så mycket värmeskada innan padden släpper
+const BURN_DOSE = 4;      // så mycket värmeskada innan kortet räknas som bränt
 const FEED_RATE = 0.9;    // tennenheter per sekund (1,0 = lagom fog)
 const FLUX_PER_SOLDER = 1.1;
 const FLUX_BURN = 0.9;
@@ -238,6 +239,7 @@ function step(dt) {
 
   // slut?
   if (S.dose >= LIFT_DOSE) { S.lifted = true; finish(); return; }
+  if (!S.iron && S.dose >= BURN_DOSE) { finish(); return; } // bränt kort: övningen är slut när kolven lyfts
   if (!S.iron && S.wasMolten && S.T < melt) {
     S.solidT += dt;
     if (S.solidT > 0.3) finish();
@@ -367,7 +369,7 @@ function render() {
 function hint() {
   const { melt, wetT } = cfg;
   const kIron = KEYS_MODE ? 'A' : 'Kolv', kFeed = KEYS_MODE ? 'L' : 'Tenn';
-  if (S.dose > 3.5) return ['Kortet blir brunt. Lyft kolven!', 'bad'];
+  if (S.dose > 2) return ['Kortet blir brunt. Lyft kolven!', 'bad'];
   if (S.feed && S.T < melt) return [S.iron ? 'Tennet smälter inte än. Värm lite till.' : `Tennet smälter inte. Håll in ${kIron} så att kolven värmer fogen.`, 'warn'];
   if (S.a === 0 && !S.iron) return [`Håll in ${kIron} för att lägga kolven mot fogen.`, ''];
   if (S.a === 0 && S.iron && !cfg.hints) return [`Håll kvar ${kIron} och prova tennet med ${kFeed}.`, ''];
@@ -395,6 +397,8 @@ function finish() {
   const { wetT } = cfg;
   let kind;
   if (S.lifted) kind = 'lyft';
+  else if (S.dose >= BURN_DOSE) kind = 'brant';
+  else if (S.a < 0.02) kind = 'inget';
   else if (S.a < 0.45) kind = 'lite';
   else if (S.ox >= 0.5) kind = 'brand';
   else if (S.w < 0.6) kind = 'kall';
@@ -441,6 +445,18 @@ function finish() {
       why = 'Du höll kvar kolven för länge. Flussmedlet inuti tenntråden brann upp, och utan flussmedel förstörs tennets yta.';
       fix = 'Lyft kolven så fort tennet flutit ut runt benet.';
       if (cfg.temp >= 400) notes.push('Med kolven på 400 °C brinner flussmedlet upp fortare.');
+      break;
+    case 'brant':
+      title = 'Kortet blev bränt';
+      body = 'Kortet har fått en brun fläck runt padden. Värmen har skadat kortet, och padden kan lossna.';
+      why = 'Du höll kolven mot fogen för länge.';
+      fix = 'En fog ska gå fort. Blir den inte klar, lyft kolven och låt fogen svalna innan du provar igen.';
+      break;
+    case 'inget':
+      title = 'Inget tenn på fogen';
+      body = 'Du värmde fogen länge, men inget tenn kom dit.';
+      why = 'Kolven värmer bara. Tennet kommer från tenntråden.';
+      fix = `När fogen är varm, håll in ${KEYS_MODE ? 'L' : 'Tenn'} och mata på tenn.`;
       break;
     case 'lite':
       title = 'För lite tenn';

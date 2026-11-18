@@ -8,7 +8,7 @@ Play it at https://solder.saadih.work, or open `index.html` in a browser. Nothin
 
 Made by Hussein Al-Saadi. Teachers can use it in class for free. Star the repo if it helps you.
 
-[PLAN.md](PLAN.md) lists what comes next.
+Want more exercises, or found something wrong? [Open an issue](https://github.com/saadih/lodskolan/issues) and say what you need.
 
 ## Deploy
 

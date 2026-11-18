@@ -19,8 +19,8 @@ const FLUX_BURN = 0.9;
 const AIR_COOL = 0.9;
 
 const ALLOYS = {
-  bly:    { short: 'Sn63/Pb37 (blyhaltigt)', melt: 183, dull: 0 },
-  blyfri: { short: 'SAC305 (blyfritt)', melt: 217, dull: 0.3 },
+  bly:    { short: 'Tenn med bly', melt: 183, dull: 0 },      // Sn63/Pb37
+  blyfri: { short: 'Blyfritt tenn', melt: 217, dull: 0.3 },   // SAC305
 };
 const TIPS = {
   mejsel: { name: 'Mejselspets', k: 1.0 },
@@ -29,24 +29,24 @@ const TIPS = {
 
 const LEVELS = [
   {
-    name: 'Första fogen', sub: 'Blyhaltigt tenn, termometer på',
+    name: 'Första fogen', sub: 'En termometer hjälper dig',
     alloy: 'bly', tip: 'mejsel', temp: 330, sink: 0.1, thermo: true, hints: true,
-    intro: 'Du lödar fast ett motstånd med blyhaltigt tenn (Sn63/Pb37). Det smälter vid 183 °C och förlåter mycket. Termometern visar fogens temperatur, och vid den gröna linjen flyter tennet ut.',
+    intro: 'Du lödar fast ett motstånd på ett kretskort. Termometern visar hur varm fogen är, och vid den gröna linjen flyter tennet ut. Inuti tenntråden finns flussmedel som får tennet att fästa. Det brinner bort om du värmer för länge.',
   },
   {
-    name: 'Blyfritt', sub: 'SAC305 smälter först vid 217 °C',
+    name: 'Blyfritt tenn', sub: 'Smälter senare och kräver mer värme',
     alloy: 'blyfri', tip: 'mejsel', temp: 360, sink: 0.1, thermo: true, hints: true,
-    intro: 'Samma fog med blyfritt tenn (SAC305). Det smälter vid 217 °C, så kolven står på 360 °C och fogen tar längre tid. Den varmare kolven bränner också flussmedlet fortare. Industrin lödar blyfritt sedan EU:s RoHS-direktiv kom 2006.',
+    intro: 'Samma fog, nu med blyfritt tenn. Nästan all ny elektronik löds blyfritt. Det smälter vid högre temperatur än tenn med bly, så du får värma längre innan tennet smälter. Kolven är också varmare, och då brinner flussmedlet bort fortare.',
   },
   {
-    name: 'Utan termometer', sub: 'Du ser bara tennet',
+    name: 'Utan termometer', sub: 'Titta på tennet i stället',
     alloy: 'bly', tip: 'mejsel', temp: 330, sink: 0.1, thermo: false, hints: false,
-    intro: 'På jobbet sitter ingen termometer på fogen. Titta på tennet: flyter det ut runt benet och blänker? Ryker flussmedlet? Räkna sekunderna.',
+    intro: 'Nu har du ingen termometer, precis som vid en riktig lödstation. Prova med tenntråden: när den smälter är fogen varm. Lyft kolven när tennet flutit ut runt benet.',
   },
   {
-    name: 'Jordplanet', sub: 'Du väljer spets och temperatur',
+    name: 'Stor kopparyta', sub: 'Du väljer spets och temperatur',
     alloy: 'bly', tip: null, temp: null, sink: 0.6, thermo: true, hints: true, ground: true, choose: true,
-    intro: 'Padden sitter i ett stort kopparplan, ett jordplan, som leder bort värmen medan du lödar. Välj spets och temperatur innan du börjar. En smal spets har lite värme att ge.',
+    intro: 'Den här padden sitter ihop med en stor kopparyta på kortet. Koppar leder bort värme, så fogen blir svår att få varm. Välj spets och temperatur innan du börjar. En smal spets ger lite värme och en bred ger mycket.',
   },
 ];
 
@@ -62,6 +62,9 @@ let cfg = null;
 let S = null;
 let raf = 0, lastT = 0, clock = 0;
 const input = { iron: false, feed: false };
+// dator med tangentbord visar A och L, pekskärm visar knapparnas namn
+const KEYS_MODE = !window.matchMedia('(pointer: coarse)').matches;
+document.documentElement.classList.toggle('keys-mode', KEYS_MODE);
 const choice = { tip: 'konisk', temp: 330 };
 
 function newState() {
@@ -137,7 +140,7 @@ function openIntro(i) {
   const ch = $('#choose');
   ch.innerHTML = '';
   if (lv.choose) {
-    ch.appendChild(chipGroup('Spets', 'tip', [['konisk', 'Konisk, smal'], ['mejsel', 'Mejsel, bred']]));
+    ch.appendChild(chipGroup('Spets', 'tip', [['konisk', 'Smal (konisk)'], ['mejsel', 'Bred (mejsel)']]));
     ch.appendChild(chipGroup('Temperatur på kolven', 'temp', [[330, '330 °C'], [360, '360 °C'], [400, '400 °C']]));
   }
   show('intro');
@@ -156,7 +159,7 @@ function startLevel() {
   cfg.melt = cfg.A.melt;
   cfg.wetT = cfg.melt + WET_MARGIN;
 
-  $('#gameTitle').textContent = `${levelIdx + 1} · ${lv.name} · ${cfg.temp} °C`;
+  $('#gameTitle').textContent = `${levelIdx + 1} · ${lv.name} · kolv ${cfg.temp} °C`;
   $('#gauges').classList.toggle('hidden', !cfg.thermo);
   $('#mMelt').style.left = (cfg.melt / 400 * 100) + '%';
   $('#mWet').style.left = (cfg.wetT / 400 * 100) + '%';
@@ -336,7 +339,14 @@ function render() {
   g.setAttribute('ry', (h * 0.12).toFixed(1));
   g.setAttribute('transform', `rotate(${mix(15, 40, S.w).toFixed(0)} ${gx.toFixed(1)} ${gy.toFixed(1)})`);
   g.setAttribute('opacity', S.a > 0.2 ? ((molten ? 0.85 : 0.45) * (1 - clamp(dull))).toFixed(2) : 0);
-  $('#holeFill').setAttribute('height', (26 * clamp(S.w * Math.min(S.a, 1))).toFixed(1));
+  const through = clamp(S.w * Math.min(S.a, 1));
+  $('#holeFill').setAttribute('height', (26 * through).toFixed(1));
+  // när hålet är fyllt kommer tennet ut på andra sidan och bildar en liten fog där också
+  const bf = clamp((through - 0.75) / 0.25);
+  const br = 3 + 11 * bf, bh = 9 * bf;
+  $('#solderBottom').setAttribute('d', bf > 0.02
+    ? `M${(200 - br).toFixed(1)} 219 Q196 220 197 ${(219 + bh).toFixed(1)} L203 ${(219 + bh).toFixed(1)} Q204 220 ${(200 + br).toFixed(1)} 219 Z`
+    : '');
 
   // brännskada och lyft pad
   $('#burn').setAttribute('opacity', (clamp(S.dose / LIFT_DOSE) * 0.85).toFixed(2));
@@ -351,8 +361,6 @@ function render() {
     $('#fFill').style.width = clamp(S.flux / 1.5) * 100 + '%';
     $('#fVal').textContent = S.a > 0 ? Math.round(clamp(S.flux / 1.1) * 100) + ' %' : '–';
   }
-  $('#ironT').textContent = fmt(S.ironTime) + ' s';
-
   const [txt, kind] = S.done ? ['', ''] : hint();
   const he = $('#hint');
   he.textContent = txt;
@@ -361,19 +369,21 @@ function render() {
 
 function hint() {
   const { melt, wetT } = cfg;
-  if (S.dose > 3.5) return ['Kortet blir brunt. Ta bort kolven!', 'bad'];
-  if (S.feed && S.T < melt) return [S.iron ? 'Fogen är för kall för tennet.' : 'Kolven ligger inte mot fogen.', 'warn'];
+  const kIron = KEYS_MODE ? 'A' : 'Kolv', kFeed = KEYS_MODE ? 'L' : 'Tenn';
+  if (S.dose > 3.5) return ['Kortet blir brunt. Lyft kolven!', 'bad'];
+  if (S.feed && S.T < melt) return [S.iron ? 'Tennet smälter inte än. Värm lite till.' : `Tennet smälter inte. Håll in ${kIron} så att kolven värmer fogen.`, 'warn'];
+  if (S.a === 0 && !S.iron) return [`Håll in ${kIron} för att lägga kolven mot fogen.`, ''];
+  if (S.a === 0 && S.iron && !cfg.hints) return [`Håll kvar ${kIron} och prova tennet med ${kFeed}.`, ''];
   if (!cfg.hints) return ['', ''];
-  if (S.plateau > 1.5) return ['Fogen slutar bli varmare. Spetsen orkar inte värma jordplanet.', 'bad'];
-  if (S.a > 0 && S.flux < 0.2 && S.T >= melt) return ['Flussmedlet tar slut. Ta bort kolven.', 'warn'];
+  if (S.plateau > 1.5) return ['Fogen blir inte varmare. Spetsen ger för lite värme.', 'bad'];
+  if (S.a > 0 && S.flux < 0.2 && S.T >= melt) return ['Flussmedlet tar slut. Lyft kolven.', 'warn'];
   if (S.a > 1.45) return ['Sluta mata, fogen har tenn nog.', 'warn'];
-  if (S.a > 0.75 && S.w >= 0.9 && S.feed) return ['Fogen är fylld. Ta bort tennet.', 'ok'];
-  if (S.a > 0.75 && S.w >= 0.9 && S.iron) return ['Lyft kolven nu.', 'ok'];
+  if (S.a > 0.75 && S.w >= 0.9 && S.feed) return [`Fogen är fylld. Släpp ${kFeed}.`, 'ok'];
+  if (S.a > 0.75 && S.w >= 0.9 && S.iron) return [`Lyft kolven nu. Släpp ${kIron}.`, 'ok'];
   if (S.a > 0 && S.w < 0.9 && S.T >= wetT) return ['Tennet flyter ut.', 'ok'];
-  if (S.a > 0 && S.feed) return ['Fyll fogen.', 'ok'];
-  if (S.iron && S.a === 0 && S.T >= wetT) return ['Fogen är varm. Mata tenn!', 'ok'];
-  if (S.iron && S.a === 0) return ['Du värmer pad och ben.', ''];
-  if (S.a === 0) return ['Lägg kolven mot pad och ben.', ''];
+  if (S.a > 0 && S.feed) return ['Fortsätt mata tills fogen är fylld.', 'ok'];
+  if (S.iron && S.a === 0 && S.T >= melt) return [`Fogen är varm. Håll kvar ${kIron} och mata tenn med ${kFeed}.`, 'ok'];
+  if (S.iron && S.a === 0) return [`Fogen värms upp. Håll kvar ${kIron}.`, ''];
   return ['', ''];
 }
 
@@ -400,63 +410,61 @@ function finish() {
     if (S.stuck) stars = 1;
   }
 
-  const heldAfter = S.wetAt != null ? S.ironTime - S.wetAt : null;
   const notes = [];
-  let title, body;
+  let title, body, why, fix = '';
 
   switch (kind) {
     case 'bra':
       title = 'Bra fog';
-      body = 'Tennet blänker, bildar en konkav vulkan runt benet och har runnit ner i hålet. Du värmde pad och ben samtidigt, så tennet fäste på båda.';
-      if (cfg.alloy === 'blyfri') notes.push('Blyfritt tenn blir mattare än blyhaltigt, även i en godkänd fog.');
-      if (S.dose >= 2) notes.push('Kortet fick en brun ring runt padden. Bli klar snabbare.');
+      body = 'Tennet blänker och ligger som en liten vulkan runt benet. Det har också runnit igenom hålet och kommit ut på andra sidan kortet.';
+      why = 'Du värmde padden och benet samtidigt, så tennet fäste på båda.';
+      if (cfg.alloy === 'blyfri') notes.push('Blyfritt tenn blir lite mattare än tenn med bly, även i en bra fog.');
+      if (S.dose >= 2) notes.push('Kortet fick en brun ring runt padden. Lyft kolven tidigare nästa gång.');
       if (stars === 2 && S.a < 0.7) notes.push('Med lite mer tenn hade vulkanen blivit fylligare.');
-      if (stars === 2 && S.a > 1.35) notes.push('Du matade mer tenn än fogen behöver.');
+      if (stars === 2 && S.a > 1.35) notes.push('Du matade lite mer tenn än fogen behöver.');
       if (stars === 2 && S.ox >= 0.2) notes.push('Flussmedlet höll på att ta slut. Lyft kolven tidigare.');
       break;
     case 'kall':
-      title = 'Kall fog (kallod)';
-      body = 'Tennet smälte men flöt aldrig ut över pad och ben. Du får en grå klick som sitter nu men kan glappa eller spricka när kortet skakar eller blir varmt.';
-      if (S.maxT < wetT) {
-        notes.push(`Fogen nådde ${Math.round(S.maxT)} °C. ${A.short} behöver runt ${wetT} °C för att flyta ut.`);
-        if (cfg.ground && cfg.tip === 'konisk') notes.push('En konisk spets rymmer för lite värme för ett jordplan. Ta mejselspetsen.');
-        else if (cfg.ground) notes.push('Jordplanet leder bort värmen. Höj temperaturen.');
+      title = 'Det blev en kallod';
+      body = 'Tennet smälte men flöt aldrig ut över padden och benet. Det ligger som en grå klick ovanpå. En sådan fog kallas kallod, och den kan glappa.';
+      if (S.maxT < wetT && cfg.ground && cfg.tip === 'konisk') {
+        why = 'Fogen blev aldrig varm nog. Den smala spetsen ger för lite värme för en så stor kopparyta.';
+        fix = 'Välj den breda spetsen.';
+      } else if (S.maxT < wetT && cfg.ground) {
+        why = 'Fogen blev aldrig varm nog. Kopparytan leder bort värmen.';
+        fix = 'Värm längre innan du lyfter kolven, eller höj temperaturen.';
       } else {
-        notes.push('Fogen blev varm nog, men du lyfte kolven innan tennet flöt ut.');
+        why = 'Du lyfte kolven innan fogen blev varm nog för att tennet skulle flyta ut.';
+        fix = 'Håll kvar kolven tills du ser tennet flyta ut runt benet. Lyft den sedan.';
       }
-      if (S.firstMelt != null && S.firstMelt < 0.7) notes.push(`Du matade tenn efter ${fmt(S.firstMelt)} s. Värm pad och ben i 1–2 s först.`);
       break;
     case 'brand':
-      title = 'Bränd fog';
-      body = 'Flussmedlet i tenntråden brinner bort medan du värmer. Utan flussmedel oxiderar tennet, och fogen blir matt och grynig. Den håller lika dåligt som en kallod.';
-      if (heldAfter != null) notes.push(`Du höll kvar kolven ${fmt(heldAfter)} s efter att tennet flöt ut. En halv sekund räcker.`);
-      notes.push('Ska du värma om en fog, tillsätt lite nytt tenn eller flussmedel först.');
-      if (cfg.temp >= 400) notes.push('På 400 °C brinner flussmedlet bort fortare.');
+      title = 'Fogen blev bränd';
+      body = 'Tennet är matt och grynigt i stället för blankt. En sådan fog håller dåligt.';
+      why = 'Du höll kvar kolven för länge. Flussmedlet inuti tenntråden brann upp, och utan flussmedel förstörs tennets yta.';
+      fix = 'Lyft kolven så fort tennet flutit ut runt benet.';
+      if (cfg.temp >= 400) notes.push('Med kolven på 400 °C brinner flussmedlet upp fortare.');
       break;
     case 'lite':
       title = 'För lite tenn';
-      body = 'Tennet täcker inte padden och fyller inte hålet. Fogen kan få dålig kontakt eller släppa.';
-      notes.push('Mata tenn i ungefär en sekund, tills det bildar en vulkan runt hela benet.');
+      body = 'Tennet täcker inte padden och fyller inte hålet. Fogen kan släppa.';
+      why = 'Du tog bort tenntråden för tidigt.';
+      fix = 'Mata på tills tennet ligger som en liten vulkan runt hela benet.';
       break;
     case 'mycket':
       title = 'För mycket tenn';
-      body = 'En rund kula döljer benet, så du ser inte om tennet fäst på padden. Bredvid andra pads blir det lätt en brygga, alltså en kortslutning.';
-      notes.push('Sluta mata medan du fortfarande ser benets kontur genom tennet.');
+      body = 'Tennet blev en rund kula som gömmer benet. Då syns det inte om tennet fäst, och kulan kan nå padden bredvid och kortsluta.';
+      why = 'Du matade tenn för länge.';
+      fix = 'Ta bort tenntråden medan du fortfarande ser benet sticka upp.';
       break;
     case 'lyft':
       title = 'Padden lossnade';
-      body = 'Lim håller kopparplattan mot kortet, och limmet släpper när du värmer för länge. Kortet måste lagas.';
-      notes.push(`Kolven låg på i ${fmt(S.ironTime)} s. En fog tar 2–4 s.`);
-      notes.push('Blir fogen inte klar, lyft kolven, låt fogen svalna och börja om.');
+      body = 'Kopparplattan har släppt från kortet, och nu är kortet trasigt.';
+      why = 'Du värmde alldeles för länge. Limmet som håller padden tål inte så mycket värme.';
+      fix = 'Blir fogen inte klar, lyft kolven och låt fogen svalna innan du provar igen.';
       break;
   }
-  if (S.stuck) notes.push('Du lyfte kolven medan du matade tenn, och tråden frös fast i fogen. Ta bort tennet först och kolven sist.');
-  if (S.coldFeed > 0.5 && kind !== 'bra') notes.push(`Du tryckte tråden mot en kall fog i ${fmt(S.coldFeed)} s. Vänta tills fogen är varm, så smälter tennet av fogens värme.`);
-
-  const amount = S.a < 0.45 ? 'för lite' : S.a < 0.7 ? 'lite' : S.a <= 1.35 ? 'lagom' : S.a <= 1.6 ? 'mycket' : 'för mycket';
-  const stats = [`Kolven på ${fmt(S.ironTime)} s`];
-  if (S.firstMelt != null) stats.push(`förvärmning ${fmt(S.firstMelt)} s`);
-  stats.push(`max ${Math.round(S.maxT)} °C`, `tenn: ${amount}`);
+  if (S.stuck) notes.push('Du lyfte kolven medan tenntråden låg kvar, och tråden frös fast i fogen. Ta bort tennet först och kolven sist.');
 
   if (stars > 0) {
     store.stars = store.stars || {};
@@ -464,16 +472,19 @@ function finish() {
     save();
   }
 
-  $('#rStars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-  $('#rStars').setAttribute('aria-label', `${stars} av 3 stjärnor`);
+  $('#rStars').textContent = kind === 'bra' ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '';
+  $('#rStars').setAttribute('aria-label', kind === 'bra' ? `${stars} av 3 stjärnor` : '');
   const stamp = $('#rStamp');
-  stamp.textContent = kind === 'bra' ? 'Godkänd' : 'Underkänd';
+  stamp.textContent = kind === 'bra' ? 'Snyggt!' : 'Prova igen';
   stamp.className = 'stamp ' + (kind === 'bra' ? 'good' : 'bad');
   $('#rTitle').textContent = title;
   $('#rBody').textContent = body;
+  $('#rWhy').innerHTML = '<b>Varför?</b> ';
+  $('#rWhy').append(why);
+  $('#rFix').innerHTML = fix ? '<b>Nästa gång:</b> ' : '';
+  if (fix) $('#rFix').append(fix);
   $('#rNotes').innerHTML = '';
   notes.forEach((n) => { const li = document.createElement('li'); li.textContent = n; $('#rNotes').appendChild(li); });
-  $('#rStats').textContent = stats.join(' · ');
   $('#nextBtn').textContent = levelIdx < LEVELS.length - 1 ? 'Nästa övning' : 'Alla övningar';
   $('#nextBtn').style.display = kind === 'bra' ? '' : 'none';
   $('#btnIron').classList.remove('on');

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f5f1e8">
-<title>Lödskolan</title>
+<title>Lär dig löda</title>
 <meta name="description" content="Öva lödning i mobilen: värm fogen, mata tenn och släpp i rätt ordning.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Big+Shoulders+Display:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,13 +16,13 @@
 <!-- MENY -->
 <section id="menu" class="screen active">
   <header class="brand">
-    <p class="kicker">Övningar i hålmontering</p>
-    <h1>Löd&shy;skolan</h1>
-    <p class="lede">Du värmer fogen, matar tenn och släpper i rätt ordning. Värmer du för kort blir det kallod. Värmer du för länge bränner du flussmedlet, och till slut lossnar padden.</p>
+    <h1>Lär dig löda!</h1>
+    <p class="lede">Här övar du lödning i korta interaktiva övningar. Du håller lödkolven och tenntråden själv och ser direkt hur fogen blir. Blir det fel får du veta varför, och sedan provar du igen.</p>
   </header>
   <ol id="levels" class="toc"></ol>
   <footer class="credit">
-    Gjord av Hussein Al-Saadi. Fri att använda i undervisning. Källkoden ligger på <a href="https://github.com/saadih/lodskolan">GitHub</a>.
+    <a class="starlink" href="https://github.com/saadih/lodskolan">★ Gillar du sidan? Ge den en stjärna på GitHub</a>
+    <p>Gjord av Hussein Al-Saadi. Gratis att använda, även i undervisning.</p>
   </footer>
 </section>
 
@@ -35,13 +35,17 @@
   <div id="choose" class="choose"></div>
   <h3>Så lödar du</h3>
   <ol class="steps">
-    <li>Lägg spetsen så att den rör både padden och benet.</li>
-    <li>Vänta 1–2 sekunder medan fogen blir varm.</li>
-    <li>Håll tenntråden mot fogen, på andra sidan benet från spetsen, tills fogen är fylld.</li>
-    <li>Ta bort tennet.</li>
-    <li>Låt kolven ligga kvar en halv sekund och lyft den sedan. Rör inte kortet förrän tennet stelnat.</li>
+    <li>Lägg lödkolven så att spetsen rör både padden och benet.</li>
+    <li>Prova med tenntråden mot fogen. När tennet smälter är fogen varm nog.</li>
+    <li>Mata på tenn tills det ligger som en liten vulkan runt benet.</li>
+    <li>Ta bort tenntråden först.</li>
+    <li>Lyft kolven strax efter. Rör inte kortet förrän tennet stelnat.</li>
   </ol>
-  <p class="help">Håll <b>Kolv</b> och <b>Tenn</b> med var sin tumme. På dator: <kbd>A</kbd> och <kbd>L</kbd>.</p>
+  <h3>Så styr du</h3>
+  <ul class="keys">
+    <li><b>På dator:</b> håll in <kbd>A</kbd> för lödkolven och <kbd>L</kbd> för tenntråden. Du kan hålla in båda samtidigt.</li>
+    <li><b>På mobil:</b> håll in knapparna Kolv och Tenn med var sin tumme.</li>
+  </ul>
   <button id="startBtn" class="key primary">Börja löda</button>
 </section>
 
@@ -90,8 +94,8 @@
       </filter>
     </defs>
 
-    <rect x="96" y="76" width="208" height="156" fill="#efe9dc"/>
-    <rect x="96" y="76" width="208" height="156" fill="url(#grid)"/>
+    <rect x="-200" y="76" width="800" height="156" fill="#efe9dc"/>
+    <rect x="-200" y="76" width="800" height="156" fill="url(#grid)"/>
 
     <!-- kretskort -->
     <rect x="16" y="190" width="368" height="26" fill="#1f6a3d"/>
@@ -110,6 +114,8 @@
     <rect x="84" y="250" width="7" height="26" fill="#c0392b"/>
     <rect x="108" y="250" width="5" height="26" fill="#c9a43a"/>
     <path d="M128 263 H200 V120" fill="none" stroke="#a9b0b6" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+
+    <path id="solderBottom" d="" fill="url(#gShiny)"/>
 
     <!-- fogen: pad och tenn -->
     <g id="joint">
@@ -156,19 +162,18 @@
       <span id="tVal" class="val">25 °C</span>
     </div>
     <div class="gauge">
-      <span class="lbl">Fluss</span>
+      <span class="lbl">Flussmedel</span>
       <div class="bar"><div id="fFill" class="fill flux"></div></div>
       <span id="fVal" class="val">–</span>
     </div>
   </div>
   <div class="statusrow">
     <span id="hint" class="hint"></span>
-    <span class="timer">Kolv <b id="ironT">0,0 s</b></span>
   </div>
 
   <div class="controls">
-    <button id="btnIron" class="hold iron">Kolv<small>A</small></button>
-    <button id="btnFeed" class="hold feed">Tenn<small>L</small></button>
+    <button id="btnIron" class="hold iron">Kolv<small class="k">håll in A</small><small class="t">håll in</small></button>
+    <button id="btnFeed" class="hold feed">Tenn<small class="k">håll in L</small><small class="t">håll in</small></button>
   </div>
 
   <div id="result" class="result hidden" aria-live="polite">
@@ -178,10 +183,11 @@
     </div>
     <h2 id="rTitle"></h2>
     <p id="rBody"></p>
+    <p id="rWhy"></p>
+    <p id="rFix"></p>
     <ul id="rNotes" class="notes"></ul>
-    <p id="rStats" class="stats"></p>
     <div class="row">
-      <button id="retryBtn" class="key">Försök igen</button>
+      <button id="retryBtn" class="key">Prova igen</button>
       <button id="nextBtn" class="key primary">Nästa övning</button>
     </div>
   </div>

@@ -7,7 +7,7 @@ The site is in Swedish first (that is what the class uses), with English as an o
 
 - Plain HTML, CSS and JavaScript. No framework, no build step: open `index.html` and it runs.
 - Solder joints are drawn as SVG in code, so no image files are needed and they scale on a phone.
-- Hosted free on GitHub Pages once the repo is public.
+- Hosted on Cloudflare Pages at https://solder.saadih.work (project `lodskolan`).
 - Works on a phone first, because students will open it on their phones.
 
 ## Versions

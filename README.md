@@ -10,6 +10,12 @@ Made by Hussein Al-Saadi. Teachers can use it in class for free. Star the repo i
 
 Want more exercises, or found something wrong? [Open an issue](https://github.com/saadih/lodskolan/issues) and say what you need. To add an exercise or change something yourself, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Sources
+
+The theory page ends with a "Läs vidare" list. The facts on the site were checked against those sources:
+the Adafruit Guide to Excellent Soldering, Swedish and English Wikipedia (Lödning, Lödtenn, Solder alloys,
+Flussmedel), Kemikalieinspektionen on RoHS, and the HSE leaflet "Solder fume and you".
+
 ## Deploy
 
 The site runs on Cloudflare Workers as static files. `.assetsignore` keeps everything except `index.html`, `style.css` and `game.js` off the live site.

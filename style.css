@@ -115,6 +115,14 @@ kbd {
 }
 .joints figcaption { font-size: 14px; margin-top: 6px; color: var(--ink-2); }
 .joints figcaption b { color: var(--ink); }
+#teori ul.sources { list-style: none; padding: 0; }
+.sources li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.src-topic {
+  display: block; font-family: var(--display); font-weight: 600; font-size: 14px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2);
+}
+.sources a { font-weight: 700; }
+.src-note { display: block; font-size: 15px; color: var(--ink-2); }
 #startFirst { width: 100%; margin: 22px 0 10px; padding: 16px; font-size: 24px; }
 
 /* ---- intro ---- */

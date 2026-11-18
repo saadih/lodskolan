@@ -4,7 +4,6 @@
 const $ = (s) => document.querySelector(s);
 const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
 const mix = (a, b, t) => a + (b - a) * t;
-const fmt = (n, d = 1) => n.toFixed(d).replace('.', ',');
 
 /* ---------- fysik-konstanter ----------
    Förenklad modell, avstämd så att tajmingen känns som på riktigt:
@@ -71,8 +70,8 @@ function newState() {
   return {
     T: ROOM, a: 0, w: 0, flux: 0, ox: 0, dose: 0,
     iron: false, feed: false,
-    ironTime: 0, firstMelt: null, wetAt: null, wasMolten: false,
-    solidT: 0, coldFeed: 0, maxT: ROOM, rate: 0, plateau: 0, burn: 0,
+    ironTime: 0, wasMolten: false,
+    solidT: 0, maxT: ROOM, rate: 0, plateau: 0, burn: 0,
     done: false, lifted: false, stuck: false,
     ironPos: 0, wirePos: 0, smokeAcc: 0,
   };
@@ -160,7 +159,8 @@ function startLevel() {
   cfg.melt = cfg.A.melt;
   cfg.wetT = cfg.melt + WET_MARGIN;
 
-  $('#gameTitle').textContent = `${levelIdx + 1} · ${lv.name} · kolv ${cfg.temp} °C`;
+  $('#gameTitle').textContent = `${levelIdx + 1} · ${lv.name}`;
+  $('#ironTemp').textContent = `Kolv ${cfg.temp} °C`;
   $('#gauges').classList.toggle('hidden', !cfg.thermo);
   $('#mMelt').style.left = (cfg.melt / 400 * 100) + '%';
   $('#mWet').style.left = (cfg.wetT / 400 * 100) + '%';
@@ -209,9 +209,6 @@ function step(dt) {
       S.a += da;
       S.flux += da * FLUX_PER_SOLDER;
       S.T -= 35 * da; // kallt tenn kyler fogen lite
-      if (S.firstMelt == null) S.firstMelt = S.ironTime;
-    } else {
-      S.coldFeed += dt;
     }
   }
 
@@ -228,7 +225,6 @@ function step(dt) {
   if (S.a > 0 && S.T >= wetT && S.flux > 0.05) {
     S.w = Math.min(1, S.w + 1.8 * dt * clamp(0.5 + (S.T - wetT) / 20, 0.5, 1.5));
   }
-  if (S.w >= 0.9 && S.wetAt == null) S.wetAt = S.ironTime;
 
   // utan flussmedel oxiderar smält tenn: matt och grynigt
   if (S.a > 0 && S.T >= melt && S.flux <= 0.05) S.ox = Math.min(1, S.ox + 0.45 * dt);
@@ -396,7 +392,7 @@ function finish() {
   S.iron = S.feed = false;
   S.burn = 0;
 
-  const { melt, wetT, A } = cfg;
+  const { wetT } = cfg;
   let kind;
   if (S.lifted) kind = 'lyft';
   else if (S.a < 0.45) kind = 'lite';
@@ -494,6 +490,8 @@ function finish() {
   $('#result').classList.remove('hidden');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('#result').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'end' });
+  // tangentbordsspelare ska kunna gå vidare med Enter
+  (kind === 'bra' ? $('#nextBtn') : $('#retryBtn')).focus({ preventScroll: true });
 }
 
 /* ---------- loop ---------- */

@@ -1,0 +1,11 @@
+# Only index.html, style.css and game.js go live.
+.git
+.gitignore
+.assetsignore
+.impeccable.md
+.wrangler
+wrangler.jsonc
+node_modules
+dist
+*.md
+LICENSE

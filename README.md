@@ -12,7 +12,8 @@ Made by Hussein Al-Saadi. Teachers can use it in class for free. Star the repo i
 
 ## Deploy
 
+The site runs on Cloudflare Workers as static files. `.assetsignore` keeps everything except `index.html`, `style.css` and `game.js` off the live site.
+
 ```
-mkdir dist && cp index.html style.css game.js dist/
-npx wrangler pages deploy dist --project-name lodskolan --branch main
+npx wrangler deploy
 ```

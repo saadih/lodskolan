@@ -1,0 +1,11 @@
+{
+  // Static site on Cloudflare Workers. Deploy with: npx wrangler deploy
+  "name": "lodskolan",
+  "compatibility_date": "2026-11-17",
+  "assets": {
+    "directory": "."
+  },
+  "routes": [
+    { "pattern": "solder.saadih.work", "custom_domain": true }
+  ]
+}
